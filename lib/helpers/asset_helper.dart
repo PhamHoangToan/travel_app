@@ -1,0 +1,37 @@
+class AssetHelper {
+  static String  imageBackgroundSlash = 'assets/images/quiz-logo.png';
+  static String  intro1 = 'assets/images/background.png';
+  static String  intro2 = 'assets/images/background.png';
+  static String  intro3 = 'assets/images/background.png';
+  static String  icoHotels = 'assets/icons/Hotels.png';
+  static String  icoPlane = 'assets/icons/airplane.png';
+  static String  icoHotelPlane = 'assets/icons/travel-and-tourism.png';
+  static String  icoLocation = 'assets/icons/location.png';
+  static String  icoCalendar = 'assets/icons/calendar.png';
+  static String  icoBed = 'assets/icons/bed.png';
+  static String  icoGuest = 'assets/icons/Guest.png';
+  static String  icoAdd = 'assets/icons/add.png';
+  static String  icoMinus = 'assets/icons/minus.png';
+  static String  icoRoom = 'assets/icons/Hotels.png';
+  static String  icoStar = 'assets/icons/star.png';
+  static String  hotel1 = 'assets/images/hotel1.jpg';
+  static String  hotel2 = 'assets/images/hotel2.jpg';
+  static String  hotel3 = 'assets/images/hotel3.jpg';
+  static String  map = 'assets/images/map.jpg';
+  static String  icoWifi = 'assets/icons/wifi.png';
+  static String  icoRefund = 'assets/icons/refund.png';
+  static String  icoBreakFast = 'assets/icons/breakfast.png';
+  static String  icoNoSmoke= 'assets/icons/no-smoke.png';
+  static String  room1 = 'assets/images/room1.jpg';
+  static String  room2 = 'assets/images/room2.jpg';
+  static String  city1 = 'assets/images/city1.jpg';
+  static String  city2 = 'assets/images/city2.jpg';
+  static String  city3 = 'assets/images/city3.jpg';
+  static String  city4 = 'assets/images/city4.jpg';
+  static String  icoUser = 'assets/icons/user.png';
+  static String  icoSeat = 'assets/icons/seat.png';
+  static String  icoNavigator = 'assets/icons/navigator.png';
+  static String  flight1 = 'assets/images/flight1.jpg';
+  static String  flight2 = 'assets/images/flight2.jpg';
+  static String  flight3 = 'assets/images/flight3.jpg';
+}
