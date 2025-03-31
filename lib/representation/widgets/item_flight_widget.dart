@@ -27,22 +27,22 @@ class ItemFlightWidget extends StatelessWidget {
           ),
         ],
       ),
-      margin: EdgeInsets.only(right: kDefaultPadding / 2),
+      margin: const EdgeInsets.symmetric(horizontal: kDefaultPadding / 2, vertical: kDefaultPadding / 2),
       child: Column(
         children: [
-          // Display flight image (Fixed)
+          // Hiển thị hình ảnh chuyến bay
           ClipRRect(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(kDefaultPadding / 2),
               bottomRight: Radius.circular(kDefaultPadding / 2),
             ),
             child: Image.network(
-              flightModel.image, // Flight image from URL
+              flightModel.image,
               height: 150,
               width: double.infinity,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Image.network(
-                'https://i.imgur.com/yMbF4Zt.png', // Default image if loading fails
+                "https://i.imgur.com/JfPrEvm.png",
                 height: 150,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -50,60 +50,66 @@ class ItemFlightWidget extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(kDefaultPadding / 2),
+            padding: const EdgeInsets.all(kDefaultPadding / 2),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Display airline name
+                // Tên hãng bay
                 Text(
                   flightModel.airlineName,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
-                SizedBox(height: kDefaultPadding / 2),
+                const SizedBox(height: kDefaultPadding / 2),
 
-                // Display departure location
+                // Điểm khởi hành
                 Text(
-                  'Departure: ${flightModel.departure}',
+                  'Điểm đi: ${flightModel.departure}',
                   style: TextStyle(
                     fontSize: 12,
                     color: ColorPalette.subTitleColor,
                   ),
                 ),
-                SizedBox(height: kDefaultPadding / 4),
+                const SizedBox(height: kDefaultPadding / 4),
 
-                // Display destination location
+                // Điểm đến
                 Text(
-                  'Destination: ${flightModel.destination}',
+                  'Điểm đến: ${flightModel.destination}',
                   style: TextStyle(
                     fontSize: 12,
                     color: ColorPalette.subTitleColor,
                   ),
                 ),
-                SizedBox(height: kDefaultPadding / 2),
+                const SizedBox(height: kDefaultPadding / 2),
 
-                // Display available seats
+                // Số lượng ghế còn trống
                 Text(
-                  'Available Seats: ${flightModel.seatCount}',
+                  'Số ghế trống: ${flightModel.seatCount}',
                   style: TextStyle(
                     fontSize: 12,
                     color: ColorPalette.subTitleColor,
                   ),
                 ),
-                SizedBox(height: kDefaultPadding / 2),
+                const SizedBox(height: kDefaultPadding / 2),
 
-                // Button to book flight
-                ButtonWidget(
-                  title: 'Book Now',
-                  ontap: () {
-                    Navigator.of(context).pushNamed(
-                      FlightsDetailScreen.routeName,
-                      arguments: flightModel,
-                    );
-                  },
-                ),
+                // Nút đặt vé
+               ButtonWidget(
+  title: 'Book Now',
+  ontap: () {
+    Navigator.pushNamed(
+      context,
+      FlightsDetailScreen.routeName,
+      arguments: {
+        "origin": flightModel.departure,
+        "destination": flightModel.destination,
+        "departureDate": flightModel.departureTime.toString().split(" ")[0], // ✅ Lấy ngày từ DateTime
+      },
+    );
+  },
+),
+
               ],
             ),
           ),

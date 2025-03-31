@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:travel_app/config.dart';
 import 'dart:convert';
 import 'package:travel_app/core/constants/color_constants.dart';
 import 'package:travel_app/core/constants/dismension_constants.dart';
@@ -19,7 +20,7 @@ class SelectDateScreen extends StatelessWidget {
     if (startDate == null || endDate == null) return;
 
     final response = await http.post(
-      Uri.parse(' http://192.168.88.219:8080/api/book'),  // Replace with your actual API URL
+      Uri.parse(' ${Config.apiURL}/api/book'),  // Replace with your actual API URL
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'hotelId': hotelId,

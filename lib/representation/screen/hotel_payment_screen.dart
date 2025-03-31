@@ -259,7 +259,7 @@ class _HotelPaymentScreenState extends State<HotelPaymentScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Đặt phòng thành công! Chờ admin duyệt')),
         );
-        Navigator.pop(context);
+        Navigator.pushNamedAndRemoveUntil(context, '/home_screen', (route) => false);
       } else {
         final error = jsonDecode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(

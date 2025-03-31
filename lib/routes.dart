@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:travel_app/Data/model/bookingDetails_model.dart';
 import 'package:travel_app/Data/model/flight_model.dart';
 import 'package:travel_app/Data/model/hotel_model.dart';
 import 'package:travel_app/representation/screen/CustomerInformation_Flight_Screen.dart';
 import 'package:travel_app/representation/screen/CustomerInformation_Screen.dart';
-import 'package:travel_app/representation/screen/Flights_Screen.dart';
+import 'package:travel_app/representation/screen/flight_search_screen.dart';
 import 'package:travel_app/representation/screen/PassengerInfo_screen.dart';
 import 'package:travel_app/representation/screen/Select_Destination_screen.dart';
 import 'package:travel_app/representation/screen/account_screen.dart';
@@ -21,7 +22,7 @@ import 'package:travel_app/representation/screen/guest_and_room_booking.dart';
 import 'package:travel_app/representation/screen/select_flight_screen.dart';
 import 'package:travel_app/representation/screen/Flights_detail_screen.dart';
 import 'package:travel_app/representation/screen/hotel_detail_screen.dart';
-
+import 'package:travel_app/representation/screen/CustomerInfo_screen.dart';
 final Map<String, WidgetBuilder> routes = {
   SplashScreen.routeName: (context) => const SplashScreen(),
   IntroScreen.routeName: (context) => const IntroScreen(),
@@ -32,7 +33,19 @@ final Map<String, WidgetBuilder> routes = {
   SelectDestinationScreen.routeName: (context) => SelectDestinationScreen(),
   GuestAndRoomBookingScreen.routeName: (context) => GuestAndRoomBookingScreen(),
   FlightSearchScreen.routeName: (context) => FlightSearchScreen(),
-  SelectFlightScreen.routeName: (context) => SelectFlightScreen(),
+  CustomerInfoScreen.routeName: (context) => CustomerInfoScreen(),
+  SelectFlightScreen.routeName: (context) {
+    return SelectFlightScreen(
+      departure: "SGN",
+      destinations: ["HAN"],
+      departureDate: "2025-04-01",
+    );
+  },
+  FlightsDetailScreen.routeName: (context) => FlightsDetailScreen(
+        origin: 'SGN',
+        destination: 'HAN',
+        departureDate: '2025-04-01',
+      ),
   LoginScreen.routeName: (context) => LoginScreen(),
   RegisterScreen.routeName: (context) => RegisterScreen(),
   HomeScreen.routeName: (context) => HomeScreen(),
@@ -45,37 +58,40 @@ final Map<String, WidgetBuilder> routes = {
 Route<dynamic>? generateRoutes(RouteSettings settings) {
   switch (settings.name) {
     case HotelDetailScreen.routeName:
-      final arguments = settings.arguments;
-      if (arguments is HotelModel) {
+      if (settings.arguments is HotelModel) {
         return MaterialPageRoute(
-          builder: (context) => HotelDetailScreen(hotelModel: arguments),
+          builder: (context) => HotelDetailScreen(hotelModel: settings.arguments as HotelModel),
         );
       }
       break;
 
     case FlightsDetailScreen.routeName:
-      final arguments = settings.arguments;
-      if (arguments is FlightModel) {
+      if (settings.arguments is Map<String, String>) {
+        final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
-          builder: (context) => FlightsDetailScreen(flightModel: arguments),
+          builder: (context) => FlightsDetailScreen(
+            origin: args['origin'] ?? 'Unknown',
+            destination: args['destination'] ?? 'Unknown',
+            departureDate: args['departureDate'] ?? 'Unknown',
+          ),
         );
       }
       break;
 
     case CustomerinformationFlightScreen.routeName:
-      final arguments = settings.arguments;
-      if (arguments is FlightModel) {
+      if (settings.arguments is BookingDetails) {
         return MaterialPageRoute(
-          builder: (context) => FlightsDetailScreen(flightModel: arguments),
+          builder: (context) => CustomerinformationFlightScreen(
+            bookingDetails: settings.arguments as BookingDetails,
+          ),
         );
       }
       break;
 
     case SelectRoomScreen.routeName:
-      final hotelId = settings.arguments as String?;
-      if (hotelId != null) {
+      if (settings.arguments is String) {
         return MaterialPageRoute(
-          builder: (context) => SelectRoomScreen(hotelId: hotelId),
+          builder: (context) => SelectRoomScreen(hotelId: settings.arguments as String),
         );
       }
       break;

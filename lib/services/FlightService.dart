@@ -1,209 +1,149 @@
 // import 'dart:convert';
 // import 'package:http/http.dart' as http;
-// import 'package:travel_app/Data/model/flight_model.dart';
 
-// class FlightService {
-//   final String aviationStackApiKey = ""; // API Key của AviationStack 276cc911ac57f20bfeb47801de535dbc
-//   final String duffelApiKey = "duffel_test_s7GGxYxGqelv4S4d_blfBCW_jumgO9QMncOSWCriCYY"; // API Key của Duffel
-//   final String airLabsApiKey = "your_airlabs_api_key"; // API Key của AirLabs
+// class AmadeusService {
+//   final String clientId = "u7IJu1aamWaShkbeg7jV5IvlJlNZJ8wy";
+//   final String clientSecret = "b7R0Vn6jteeJYLuC";
+//   String? accessToken;
 
-//   // Lấy dữ liệu chuyến bay từ cả hai API
-//   Future<List<FlightModel>> getFlightData() async {
-//     List<FlightModel> flights = [];
+//   Future<void> _getAccessToken() async {
+//     final response = await http.post(
+//       Uri.parse("https://test.api.amadeus.com/v1/security/oauth2/token"),
+//       headers: {"Content-Type": "application/x-www-form-urlencoded"},
+//       body: "grant_type=client_credentials&client_id=$clientId&client_secret=$clientSecret",
+//     );
 
-//     // Lấy chuyến bay từ AviationStack
-//     List<FlightModel> aviationFlights = await _getAviationStackFlights();
-//     flights.addAll(aviationFlights);
-
-//     // Lấy chuyến bay từ Duffel API
-//     List<FlightModel> duffelFlights = await _getDuffelFlights();
-//     flights.addAll(duffelFlights);
-//   print("Flights: ${flights.length}");
-//     return flights;
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body);
+//       accessToken = data["access_token"];
+//     } else {
+//       throw Exception("Failed to obtain access token");
+//     }
 //   }
 
-//   // 🛫 Lấy dữ liệu chuyến bay từ AviationStack API
-//   Future<List<FlightModel>> _getAviationStackFlights() async {
-//     final String url = "http://api.aviationstack.com/v1/flights?access_key=$aviationStackApiKey";
+//   Future<List<dynamic>> getFlights(String origin, String destination, String departureDate) async {
+//     if (accessToken == null) {
+//       await _getAccessToken();
+//     }
 
-//     try {
-//       final response = await http.get(Uri.parse(url));
+//     final url = Uri.parse(
+//         "https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=$origin&destinationLocationCode=$destination&departureDate=$departureDate&adults=1&currencyCode=USD");
 
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         List flights = data['data'];
+//     final response = await http.get(url, headers: {
+//       "Authorization": "Bearer $accessToken",
+//     });
 
-//         return Future.wait(flights.map((flight) async {
-//           String airlineCode = flight['airline']?['iata'] ?? 'VN'; // Lấy mã IATA, nếu null thì mặc định 'VN'
-//           String logoUrl = await getAirlineLogo(airlineCode);
-
-//           return FlightModel(
-//             airlineName: flight['airline']?['name'] ?? 'Unknown Airline',
-//             departure: flight['departure']?['airport'] ?? 'Unknown',
-//             destination: flight['arrival']?['airport'] ?? 'Unknown',
-//             departureTime: _parseDateTime(flight['departure']?['estimated']),
-//             arrivalTime: _parseDateTime(flight['arrival']?['estimated']),
-//             seatClass: 'Economy',
-//             seatCount: 100,
-//             ticketPrice: 1000,
-//             flightStatus: flight['flight_status'] ?? 'Unknown',
-//             image: logoUrl, // Ảnh từ API AirLabs
-//             ticketTypes: [],
-//           );
-//         }).toList());
-//       } else {
-//         print("Failed to load flights: ${response.statusCode}");
-//         return [];
-//       }
-//     } catch (e) {
-//       print("Error: $e");
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body);
+//       return data["data"];
+//     } else {
+//       print("Error fetching flights: ${response.body}");
 //       return [];
 //     }
 //   }
+//    Future<List<dynamic>> getFlightsMultipleDestinations(String origin, List<String> destinations, String departureDate) async {
+//     List<dynamic> allFlights = [];
 
-//   // ✈️ Lấy dữ liệu chuyến bay từ Duffel API
-//   Future<List<FlightModel>> _getDuffelFlights() async {
-//     final String url = "https://api.duffel.com/air/offer_requests";
-//     final Map<String, dynamic> requestBody = {
-//   "data": {
-//     "slices": [
-//       {
-//         "origin": "SGN",
-//         "destination": "HAN",
-//         "departure_date": "2025-04-01"
-//       }
-//     ],
-//     "passengers": [
-//       {
-//         "id": "pas_0001",
-//         "type": "adult"
-//       }
-//     ],
-//     "cabin_class": "economy",
-//     "currency": "USD"
-//   }
-// };
-
-//     try {
-//       final response = await http.post(
-//         Uri.parse(url),
-//         headers: {
-//           "Authorization": "Bearer $duffelApiKey",
-//           "Content-Type": "application/json",
-//           'Duffel-Version': 'v2',
-//           "Accept": "application/json"
-//         },
-//         body: jsonEncode(requestBody),
-//       );
-//          print("Duffel Response: ${response.body}");
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         List offers = data['data'] ?? [];
-
-//         return Future.wait(offers.map((offer) async {
-//           var firstSegment = offer['slices'][0]['segments'][0];
-//           String airlineCode = firstSegment['operating_carrier']['iata_code'] ?? 'VN';
-//           String logoUrl = await getAirlineLogo(airlineCode);
-
-//           return FlightModel(
-//             airlineName: firstSegment['operating_carrier']['name'] ?? 'Unknown Airline',
-//             departure: firstSegment['departure']['airport']['name'] ?? 'Unknown',
-//             destination: firstSegment['arrival']['airport']['name'] ?? 'Unknown',
-//             departureTime: _parseDateTime(firstSegment['departure']['at']),
-//             arrivalTime: _parseDateTime(firstSegment['arrival']['at']),
-//             seatClass: offer['cabin_class'] ?? 'Economy',
-//             seatCount: 100,
-//             ticketPrice: double.parse(offer['total_amount'] ?? '1000'),
-//             flightStatus: 'Available',
-//             image: logoUrl, // Ảnh từ API AirLabs
-//             ticketTypes: [],
-//           );
-//         }).toList());
-//       } else {
-//         print("Duffel API failed: ${response.statusCode} - ${response.body}");
-//         return [];
-//       }
-//     } catch (e) {
-//       print("Duffel API error: $e");
-//       return [];
+//     for (String destination in destinations) {
+//       final flights = await getFlights(origin, destination, departureDate);
+//       allFlights.addAll(flights);
 //     }
-//   }
 
-//   // 🔍 Lấy logo hãng bay từ API AirLabs
-//   Future<String> getAirlineLogo(String iataCode) async {
-//     final String url = "https://airlabs.co/api/v9/airlines?api_key=$airLabsApiKey&code=$iataCode";
-
-//     try {
-//       final response = await http.get(Uri.parse(url));
-
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         if (data['response'] != null && data['response'].isNotEmpty) {
-//           return data['response'][0]['logo'] ?? _defaultLogoUrl();
-//         }
-//       }
-//     } catch (e) {
-//       print("Error getting airline logo: $e");
-//     }
-//     return _defaultLogoUrl(); // Ảnh mặc định nếu không tìm thấy
-//   }
-
-
-//   DateTime _parseDateTime(String? dateTimeStr) {
-//     if (dateTimeStr == null) return DateTime.now();
-//     return DateTime.tryParse(dateTimeStr) ?? DateTime.now();
-//   }
-
- 
-//   String _defaultLogoUrl() {
-//     return 'https://i.imgur.com/yMbF4Zt.png';
+//     return allFlights;
 //   }
 // }
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:travel_app/Data/model/flight_model.dart';
-
 class FlightService {
-  final String aviationStackApiKey = "ca12279298msh52ceb4d4798c703p1459eejsn1548a7cebcc5"; // Replace with your AviationStack API Key
+  final String clientId = "u7IJu1aamWaShkbeg7jV5IvlJlNZJ8wy";
+    final String clientSecret = "b7R0Vn6jteeJYLuC";
+  final String baseUrl = "https://test.api.amadeus.com";
+  String? accessToken; // Lưu access token tạm thời
 
-  // Fetch flight data from AviationStack API
-  Future<List<FlightModel>> getFlightData() async {
-    final String url = "http://api.aviationstack.com/v1/flights?access_key=$aviationStackApiKey";
+  /// 🔹 **Lấy access token từ Amadeus API**
+  Future<void> fetchAccessToken() async {
+    final url = Uri.parse("$baseUrl/v1/security/oauth2/token");
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: "grant_type=client_credentials&client_id=$clientId&client_secret=$clientSecret",
+    );
 
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        List flights = data['data'];
-
-        return flights.map((flight) {
-          return FlightModel(
-            airlineName: flight['airline']?['name'] ?? 'Unknown Airline',
-            departure: flight['departure']?['airport'] ?? 'Unknown',
-            destination: flight['arrival']?['airport'] ?? 'Unknown',
-            departureTime: _parseDateTime(flight['departure']?['estimated']),
-            arrivalTime: _parseDateTime(flight['arrival']?['estimated']),
-            seatClass: 'Economy',
-            seatCount: 100,
-            ticketPrice: 1000,
-            flightStatus: flight['flight_status'] ?? 'Unknown',
-            image: 'default_image_url', // Replace with actual image URL if available
-            ticketTypes: [],
-          );
-        }).toList();
-      } else {
-        print("Failed to load flights: ${response.statusCode}");
-        return [];
-      }
-    } catch (e) {
-      print("Error: $e");
-      return [];
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      accessToken = data["access_token"];
+      print("✅ Access Token mới: $accessToken");
+    } else {
+      throw Exception("❌ Lỗi khi lấy Access Token: ${response.body}");
     }
   }
 
-  DateTime _parseDateTime(String? dateTimeStr) {
-    if (dateTimeStr == null) return DateTime.now();
-    return DateTime.tryParse(dateTimeStr) ?? DateTime.now();
+  /// 🔹 **Gọi API tìm chuyến bay**
+  Future<List<dynamic>> searchFlights(String origin, String destination, String date) async {
+    if (accessToken == null) {
+      await fetchAccessToken(); // Lấy token nếu chưa có
+    }
+
+    final url = Uri.parse("$baseUrl/v2/shopping/flight-offers?"
+        "originLocationCode=$origin&destinationLocationCode=$destination&departureDate=$date&adults=1");
+
+    final response = await http.get(
+      url,
+      headers: {"Authorization": "Bearer $accessToken"},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data["data"] ?? [];
+    } else {
+      print("❌ Lỗi khi fetch chuyến bay: ${response.body}");
+      throw Exception("Failed to fetch flights: ${response.body}");
+    }
   }
 }
+
+
+// import 'dart:convert';
+// import 'package:http/http.dart' as http;
+
+// class AviationStackService {
+//   final String apiKey = "d54a3bb7c7fa41f48b05bf97c4023e5d";
+//   final String baseUrl = "http://api.aviationstack.com/v1";
+
+//   Future<List<dynamic>> searchFlights(String origin, String destination, String date) async {
+//     final url = Uri.parse("$baseUrl/flights?access_key=$apiKey&dep_iata=$origin&arr_iata=$destination&flight_date=$date");
+    
+//     final response = await http.get(url);
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body);
+//       return data["data"] ?? [];
+//     } else {
+//       throw Exception("Failed to fetch flights: ${response.body}");
+//     }
+//   }
+
+//   Future<Map<String, dynamic>?> trackFlight(String flightIata) async {
+//     final url = Uri.parse("$baseUrl/flights?access_key=$apiKey&flight_iata=$flightIata");
+    
+//     final response = await http.get(url);
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body);
+//       return data["data"]?.isNotEmpty == true ? data["data"][0] : null;
+//     } else {
+//       throw Exception("Failed to track flight: ${response.body}");
+//     }
+//   }
+
+//   Future<List<dynamic>> getRealTimeFlights(String airlineIata) async {
+//     final url = Uri.parse("$baseUrl/flights?access_key=$apiKey&airline_iata=$airlineIata&flight_status=active");
+    
+//     final response = await http.get(url);
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body);
+//       return data["data"] ?? [];
+//     } else {
+//       throw Exception("Failed to fetch real-time flights: ${response.body}");
+//     }
+//   }
+// }

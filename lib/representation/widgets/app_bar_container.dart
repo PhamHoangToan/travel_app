@@ -25,13 +25,13 @@ class AppBarContainerWidget extends StatelessWidget implements PreferredSizeWidg
       body: Stack(
         children: [
           SizedBox(
-            height: preferredSize.height,  // Make use of preferredSize here
+            height: preferredSize.height,
             child: AppBar(
               centerTitle: true,
               automaticallyImplyLeading: false,
               elevation: 0,
               toolbarHeight: 90,
-              backgroundColor: ColorPalette.backgroundScaffoldColor,
+              backgroundColor: Colors.white,
               title: title ??
                   Row(
                     children: [
@@ -41,12 +41,12 @@ class AppBarContainerWidget extends StatelessWidget implements PreferredSizeWidg
                             borderRadius: BorderRadius.all(
                               Radius.circular(kMediumPadding),
                             ),
-                            color: Colors.white,
+                            color: Colors.blue, // Đổi thành màu xanh
                           ),
                           padding: EdgeInsets.all(kItemPadding),
                           child: Icon(
                             FontAwesomeIcons.arrowLeft,
-                            color: Colors.black,
+                            color: Colors.white,
                             size: 18,
                           ),
                         ),
@@ -59,6 +59,7 @@ class AppBarContainerWidget extends StatelessWidget implements PreferredSizeWidg
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
+                                  color: Colors.white, // Đổi thành màu trắng cho dễ đọc
                                 ),
                               ),
                             ],
@@ -69,12 +70,12 @@ class AppBarContainerWidget extends StatelessWidget implements PreferredSizeWidg
                         Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(kMediumPadding),
-                            color: Colors.white,
+                            color: Colors.blue, // Đổi thành màu xanh
                           ),
                           padding: EdgeInsets.all(kItemPadding),
                           child: Icon(
                             FontAwesomeIcons.bars,
-                            color: Colors.black,
+                            color: Colors.white,
                             size: kDefaultFontSize,
                           ),
                         ),
@@ -84,7 +85,7 @@ class AppBarContainerWidget extends StatelessWidget implements PreferredSizeWidg
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      gradient: Gradients.defaultGradientBackground,
+                      color: Colors.blue, // Đổi nền thành màu xanh
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(35),
                       ),
@@ -95,7 +96,7 @@ class AppBarContainerWidget extends StatelessWidget implements PreferredSizeWidg
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 156), // Adjusted to fit the app bar
+            margin: EdgeInsets.only(top: 156),
             padding: EdgeInsets.symmetric(horizontal: kMediumPadding),
             child: child,
           ),
@@ -105,5 +106,5 @@ class AppBarContainerWidget extends StatelessWidget implements PreferredSizeWidg
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(186); // Custom app bar height
+  Size get preferredSize => Size.fromHeight(186);
 }

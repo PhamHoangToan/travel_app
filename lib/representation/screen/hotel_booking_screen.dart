@@ -6,7 +6,6 @@ import 'package:travel_app/representation/screen/select_destination_screen.dart'
 import 'package:travel_app/representation/screen/select_date_screen.dart';
 import 'package:travel_app/representation/screen/guest_and_room_booking.dart';
 import 'package:travel_app/representation/screen/hotel_screen.dart';
-import 'package:travel_app/representation/widgets/app_bar_container.dart';
 import 'package:travel_app/representation/widgets/button_widget.dart';
 import 'package:travel_app/representation/widgets/item_booking_widget.dart';
 
@@ -26,14 +25,16 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AppBarContainerWidget(
-      titleString: 'Hotel Booking',
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Hotel Booking'),
+        backgroundColor: Colors.blue,
+      ),
+      body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: kMediumPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Destination Item
             ItemBookingWidget(
               icon: AssetHelper.icoLocation,
               title: 'Destination',
@@ -48,7 +49,6 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
               },
             ),
             SizedBox(height: kMediumPadding * 2),
-            // Date Item
             ItemBookingWidget(
               icon: AssetHelper.icoCalendar,
               title: 'Select Date',
@@ -63,7 +63,6 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
               },
             ),
             SizedBox(height: kMediumPadding * 2),
-            // Guest and Room Item
             ItemBookingWidget(
               icon: AssetHelper.icoBed,
               title: 'Guest and Room',
@@ -78,7 +77,6 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
               },
             ),
             SizedBox(height: kMediumPadding * 2),
-            // Search Button
             ButtonWidget(
               title: 'Search',
               ontap: () {
@@ -88,7 +86,6 @@ class _HotelBookingScreenState extends State<HotelBookingScreen> {
                   );
                   return;
                 }
-                // Chuyển các tiêu chí tìm kiếm sang HotelScreen
                 Navigator.of(context).pushNamed(
                   HotelScreen.routeName,
                   arguments: {

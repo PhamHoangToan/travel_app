@@ -4,7 +4,7 @@ import 'package:travel_app/core/constants/color_constants.dart';
 import 'package:travel_app/core/constants/dismension_constants.dart';
 import 'package:travel_app/helpers/asset_helper.dart';
 import 'package:travel_app/helpers/image_helper.dart';
-import 'package:travel_app/representation/screen/Flights_Screen.dart';
+import 'package:travel_app/representation/screen/flight_search_screen.dart';
 import 'package:travel_app/representation/screen/account_screen.dart';
 import 'package:travel_app/representation/screen/hotel_booking_screen.dart';
 import 'package:travel_app/representation/widgets/app_bar_container.dart';

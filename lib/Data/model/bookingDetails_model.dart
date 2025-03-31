@@ -17,7 +17,18 @@ class BookingDetails {
     required this.totalPrice,
   });
 
-  // Adding the copyWith method
+  // ✅ Thêm phương thức toJson để chuyển đổi thành JSON
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "passengers": passengers.map((p) => p.toJson()).toList(), // Convert list to JSON
+      "flightModel": flightModel.toJson(),
+      "invoice": invoice.toJson(),
+      "totalPrice": totalPrice,
+    };
+  }
+
+  // ✅ Cập nhật copyWith
   BookingDetails copyWith({
     String? id,
     List<KhachHangModel>? passengers,

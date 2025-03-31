@@ -5,7 +5,6 @@ import 'package:travel_app/representation/widgets/item_room_booking_widget.dart'
 import 'package:travel_app/services/HotelService.dart';
 import 'package:travel_app/services/fetchRoomsByHotel.dart';
 
-
 class SelectRoomScreen extends StatefulWidget {
   static const String routeName = '/select_room_screen';
   final String hotelId;
@@ -32,16 +31,24 @@ class _SelectRoomScreenState extends State<SelectRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Available Rooms")),
+      appBar: AppBar(
+        title: Text('Available Rooms'),
+        backgroundColor: Colors.blue,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: FutureBuilder<List<RoomType>>(
         future: _roomsFuture,
         builder: (context, roomsSnapshot) {
           if (roomsSnapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (roomsSnapshot.hasError) {
-            return Center(child: Text("Error loading rooms"));
+            return Center(child: Text('Error loading rooms'));
           } else if (!roomsSnapshot.hasData || roomsSnapshot.data!.isEmpty) {
-            return Center(child: Text("No rooms available"));
+            return Center(child: Text('No rooms available'));
           }
 
           final rooms = roomsSnapshot.data!;
@@ -52,7 +59,7 @@ class _SelectRoomScreenState extends State<SelectRoomScreen> {
               if (hotelSnapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else if (hotelSnapshot.hasError) {
-                return Center(child: Text("Error loading hotel info"));
+                return Center(child: Text('Error loading hotel info'));
               }
 
               final hotel = hotelSnapshot.data!;
@@ -63,7 +70,7 @@ class _SelectRoomScreenState extends State<SelectRoomScreen> {
                   if (bookedDatesSnapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (bookedDatesSnapshot.hasError) {
-                    return Center(child: Text("Error loading booked dates"));
+                    return Center(child: Text('Error loading booked dates'));
                   }
 
                   final bookedDates = bookedDatesSnapshot.data!;
@@ -77,7 +84,7 @@ class _SelectRoomScreenState extends State<SelectRoomScreen> {
                         child: ItemRoomBookingWidget(
                           room: rooms[index],
                           bookedDates: bookedDates,
-                          hotels: [hotel], // Hoặc truyền list hotels nếu có nhiều khách sạn
+                          hotels: [hotel],
                         ),
                       );
                     },

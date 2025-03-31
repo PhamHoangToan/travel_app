@@ -1,17 +1,29 @@
-class TicketType {
+class TicketTypeModel {
   final String name;
   final String description;
   final double pricePerPerson;
-  final int handLuggageKg;
-  final int? checkedLuggageKg;
-  final String details;
 
-  TicketType({
+  TicketTypeModel({
     required this.name,
     required this.description,
     required this.pricePerPerson,
-    required this.handLuggageKg,
-    this.checkedLuggageKg,
-    required this.details,
   });
+
+  // Convert to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'pricePerPerson': pricePerPerson,
+    };
+  }
+
+  // Convert from JSON
+  factory TicketTypeModel.fromJson(Map<String, dynamic> json) {
+    return TicketTypeModel(
+      name: json['name'],
+      description: json['description'],
+      pricePerPerson: (json['pricePerPerson'] as num).toDouble(),
+    );
+  }
 }
